@@ -7,7 +7,7 @@ module.exports = {
         jwt: {
             secret: process.env.JWT_SECRET || 'notasecreta!',
             expiration: process.env.JWT_EXPIRATION || '7d',
-            cookie_expiration: process.env.JWT_COOKIE_EXPIRES || 1,
+            cookieExpires: process.env.JWT_COOKIE_EXPIRES || 1,
         },
         mysql: {
             ost: process.env.MYSQL_HOST || 'localhost',
