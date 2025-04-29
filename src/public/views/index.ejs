@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <link rel="icon" href="/Icono.png" />
+  <title>RedSaludLatam - Inicio</title>
+
+  <!-- Tipografía -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
+
+  <!-- Iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+  <!-- Estilos y scripts -->
+  <link rel="stylesheet" href="/index.css" />
+  <script src="/index.js" defer></script>
+</head>
+<body>
+  <!-- Navbar (importado como parcial de EJS) -->
+  <%- include('./partial/nav') %>
+
+  <!-- Sección principal -->
+  <section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>RedSaludLatam</h1>
+
+      <!-- Buscador principal -->
+      <form class="form" id="Buscador">
+        <div class="search-container">
+            <div class="input-group">
+              <label for="que"><strong>¿Qué?</strong></label>
+              <input id="que" name="que" type="text" placeholder="Ej: Dentistas, Psicólogos..." />
+            </div>
+    
+            <div class="divider"></div>
+    
+            <div class="input-group">
+              <label for="donde"><strong>¿Dónde?</strong></label>
+              <input id="donde" name="donde" type="text" placeholder="Ej: tu ciudad..." />
+            </div>
+    
+            <button type="submit" id="Buscar">Buscar</button>
+          </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Botón flotante de WhatsApp -->
+  <a href="https://wa.me/+526645463096" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+</body>
+</html>

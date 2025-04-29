@@ -1,0 +1,79 @@
+<head>
+
+</head>
+<body>
+
+    <nav id="barra">
+      <div class="nav-left">
+        <a href="/Inicio">
+          <img src="/Logo.png" width="200" height="100" id="img" alt="Logo">
+        </a>
+      </div>
+  
+      <div class="nav-right">
+        <% if (!usuario) { %>
+          <!-- Botones para usuarios no autenticados -->
+          <div id="signin">
+            <button onclick="Registro()">Regístrate Dr.</button>
+            <button onclick="showLogin()">Iniciar Sesión</button>
+          </div>
+  
+          <!-- Modal de inicio de sesión -->
+          <div id="loginModal" class="login-modal">
+            <div class="login-content">
+              <span class="close-btn" onclick="hideLogin()">&times;</span>
+              <h2>Iniciar Sesión</h2>
+              <form class="login-form" id="login-form">
+                <input type="text" id="logusuario" name="logusuario" placeholder="Usuario o Email" required>
+                <input type="password" id="logpassword" name="logpassword" placeholder="Contraseña" required>
+                
+                <label>
+                  <input type="checkbox"> Mantener sesión iniciada
+                </label>
+  
+                <button type="submit">Acceder</button>
+  
+                <a href="#" style="display: block; text-align: center; margin-top: 15px;">
+                  ¿Olvidaste tu contraseña?
+                </a>
+              </form>
+            </div>
+          </div>
+  
+          <!-- Script para login y modal -->
+          <script src="/iniciarsesion.js" defer></script>  
+        <% } else { %>
+          <!-- Saludo y botón de cierre de sesión para usuario autenticado -->
+          <div id="logoutModal">
+            <span>Hola, <%= usuario.usuario %>.</span>
+            <button id="logout">Cerrar Sesión</button>
+          </div>
+          <!-- Script de cierre de sesión -->
+          <script src="/cerrarsesion.js" defer></script>
+        <% } %>
+      </div>
+    </nav>
+    
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        const nav = document.getElementById('barra');
+        const path = window.location.pathname;
+    
+        // Asigna colores por ruta
+        const navColors = {
+          "/api/v1/Registro": "#000000",
+          "/Busqueda": "#000000",
+          // Agrega más rutas según lo necesites
+        };
+    
+        // Aplica el color si hay coincidencia
+        if (navColors[path]) {
+          nav.style.backgroundColor = navColors[path];
+        } else {
+          // Color por defecto
+          nav.style.backgroundColor = "#3ec9c1";
+        }
+      });
+    </script>
+  </body>
+  

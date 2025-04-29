@@ -1,0 +1,270 @@
+/* RESET GENERAL */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+/* ======================== */
+/*        NAVEGACIÓN        */
+/* ======================== */
+
+nav {
+  width: 100%;
+  height: 120px;
+  background-color: #3ec9c1; /* Color principal del nav */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-right: 2rem;
+  /* left: 500; ← Esto no aplica aquí y puede eliminarse */
+}
+
+#img {
+  margin-left: 350px; /* Considera ajustar con flexbox para mejor control responsivo */
+}
+
+.nav-right a {
+  color: #fff;
+  margin-left: 1rem;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* ======================== */
+/*     SECCIÓN PRINCIPAL    */
+/* ======================== */
+
+.hero {
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  background: url('doctor.jpg') no-repeat center bottom/cover;
+  background-size: 100%; /* Redundante si ya usas /cover */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero2 {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background: url('doctor.jpg') no-repeat center bottom/cover;
+  background-size: 100%; /* Redundante si ya usas /cover */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* Oscurece fondo para legibilidad */
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: #fff;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+/* ======================== */
+/*   BÚSQUEDA PRINCIPAL     */
+/* ======================== */
+
+.search-container {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 20px solid rgba(1, 0, 0, 0.2); /* Grosor y transparencia */
+  border-radius: 12px;
+  padding: 12px 15px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.input-group input {
+  padding: 8px 10px;
+  font-size: 16px;
+  border: none;
+  outline: none;
+  background: #fff;
+}
+
+.divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.2);
+  margin: 0 15px;
+}
+
+.search-btn {
+  padding: 10px 20px;
+  background-color: #18bba8;
+  border: none;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.search-btn:hover {
+  background-color: #0056b3;
+}
+
+/* ======================== */
+/*  BOTÓN FLOTANTE WHATSAPP */
+/* ======================== */
+
+.whatsapp-float {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  bottom: 20px;
+  right: 20px;
+  background-color: #25d366;
+  color: #fff;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 30px;
+  box-shadow: 2px 2px 3px #999;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.whatsapp-float:hover {
+  background-color: #20c957;
+}
+
+/* ======================== */
+/*        BOTONES           */
+/* ======================== */
+
+button {
+  background-color: #0056b3;
+  color: #fff;
+  padding: 10px 15px;
+  border: none; /* Antes estaba '5px' ← eso no era válido */
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* ======================== */
+/*      MODAL DE LOGIN      */
+/* ======================== */
+
+.login-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.login-content {
+  position: relative;
+  background: white;
+  width: 400px;
+  margin: 100px auto;
+  padding: 30px;
+  border-radius: 10px;
+  animation: modalSlide 0.3s ease-out;
+}
+
+/* Animación de aparición del modal */
+@keyframes modalSlide {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  cursor: pointer;
+  font-size: 24px;
+  margin-right: 350px;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.login-form button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  /* margin-right innecesario aquí, ya que el botón ocupa el 100% */
+}
+
+/* ======================== */
+/*   AJUSTES INDIVIDUALES   */
+/* ======================== */
+
+#signin {
+  margin-right: 350px; /* Considera cambiar esto a una clase reutilizable */
+}
+
+#logoutModal {
+  margin-right: 350px; /* Considera cambiar esto a una clase reutilizable */
+}
