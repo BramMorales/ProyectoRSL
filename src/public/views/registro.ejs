@@ -21,149 +21,156 @@
   </section>
 
   <main>
-    <section aria-labelledby="titulo-registro">
-      <p>¿Usuario registrado? <a href="/Inicio" class="login-link">Inicia sesión</a>. Si eres un <strong>nuevo usuario</strong>, continúa registrándote en este formulario.</p>
-    </section>
+    <div class="form-card" id="formCard" enctype="multipart/form-data">
+      <form id="register-form">
+        <!-- Información Esencial -->
+        <section aria-labelledby="info-esencial">
+          <section aria-labelledby="titulo-registro">
+            <p>¿Usuario registrado? <a href="/Inicio" class="login-link">Inicia sesión</a>. Si eres un <strong>nuevo usuario</strong>, continúa registrándote en este formulario.</p>
+          </section>
 
-    <form id="register-form" action="/api/profesionales" method="POST" novalidate>
-      <!-- Información Esencial -->
-      <section aria-labelledby="info-esencial">
-        <h2 id="info-esencial">Información esencial</h2>
-
-        <label for="nombre">
-          <h3 class="required">Nombre De Presentación</h3>
-        </label>
-        <input type="text" id="nombre" name="nombre" placeholder="Ej: Dr. Juan Pérez" required autocomplete="name" aria-label="Nombre de Presentación">
-
-        <label for="ciudad">
-          <h3>Ciudad</h3>
-        </label>
-        <input type="text" id="ciudad" name="ciudad" placeholder="Ej: Ciudad de México" autocomplete="address-level2" aria-label="Ciudad">
-
-        <label for="Estado">
-          <h3>Estado</h3>
-        </label>
-        <input type="text" id="estado" name="estado" placeholder="Ej: Baja California" autocomplete="address-level2" aria-label="Ciudad">
-
-
-        <label for="especialidad">
-          <h3 class="required">Área de Especialidad</h3>
-        </label>
-        <select id="especialidad" name="especialidad" required aria-label="Área de Especialidad">
-          <option value="">Seleccione una especialidad</option>
-          <option>Cardiología</option>
-          <option>Pediatría</option>
-          <option>Dermatología</option>
-        </select>
-
-        <label for="experticia">
-          <h3>Experticia En</h3>
-        </label>
-        <input type="text" id="experticia" name="experticia" placeholder="Ej: Cirugía laparoscópica" autocomplete="off" aria-label="Experticia">
-
-        <label for="direccion">
-          <h3>Dirección Completa</h3>
-        </label>
-        <input type="text" id="direccion" name="direccion" placeholder="Calle, número, colonia" autocomplete="street-address" aria-label="Dirección Completa">
-
-        <label for="paginaweb">
-          <h3>Página Web</h3>
-        </label>
-        <input type="url" id="paginaweb" name="paginaweb" placeholder="https://www.tusitio.com" autocomplete="url" aria-label="Página Web">
-
-        <label for="telefono">
-          <h3>Teléfono</h3>
-        </label>
-        <input type="tel" id="telefono" name="telefono" placeholder="5512345678" pattern="[0-9]{10}" autocomplete="tel" aria-label="Teléfono (10 dígitos)">
-
-        <label for="whatsapp">
-          <h3>WhatsApp</h3>
-        </label>
-        <input type="tel" id="whatsapp" name="whatsapp" placeholder="5512345678" autocomplete="tel" aria-label="WhatsApp">
-      </section>
-
-      <!-- Más Información -->
-      <section aria-labelledby="mas-informacion">
-        <h2 id="mas-informacion">Más información</h2>
-
-        <label for="bio">
-          <h3>Descripción</h3>
-        </label>
-        <textarea id="bio" name="bio" rows="4" placeholder="Describe tus servicios y experiencia" aria-label="Descripción profesional"></textarea>
-      </section>
-
-      <!-- Redes Sociales -->
-        <section aria-labelledby="redes-sociales">
-          <h2 id="redes-sociales">Redes sociales</h2>
-  
-          <div>
-            <label>Red social:</label>
-            <select id="red" name="red" required>
-              <option value="ig">Instagram</option>
-              <option value="yt">Youtube</option>
-              <option value="li">LinkedIn</option>
-              <option value="fb">Facebook</option>
-              <option value="x">Twitter</option>
-            </select>
-          </div>
-          <label for="redesocial">
-            <h3>Enlaces a redes sociales</h3>
+          <br><br> <h2 id="info-esencial">Información esencial</h2><br>
+          
+          <label for="nombre">
+            <h3 class="required">Nombre De Presentación</h3>
           </label>
-          <div id="contenedorResultados"></div>
-          <input type="url" id="redesocial" name="redesocial" placeholder="Facebook, Instagram o LinkedIn" autocomplete="url" aria-label="Red Social">
+          <input type="text" id="nombre" name="nombre" placeholder="Ej: Dr. Juan Pérez" required autocomplete="name" aria-label="Nombre de Presentación">
+
+          <label for="ciudad">
+            <h3>Ciudad</h3>
+          </label>
+          <input type="text" id="ciudad" name="ciudad" placeholder="Ej: Ciudad de México" autocomplete="address-level2" aria-label="Ciudad" required>
+
+          <label for="Estado">
+            <h3>Estado</h3>
+          </label>
+          <input type="text" id="estado" name="estado" placeholder="Ej: Baja California" autocomplete="address-level2" aria-label="Ciudad" required>
+
+
+          <label for="especialidad">
+            <h3 class="required">Área de Especialidad</h3>
+          </label>
+          <select id="especialidad" name="especialidad" required aria-label="Área de Especialidad" required>
+            <option value="">Seleccione una especialidad</option>
+            <option>Cardiología</option>
+            <option>Pediatría</option>
+            <option>Dermatología</option>
+          </select>
+
+          <label for="experticia">
+            <h3>Experticia En</h3>
+          </label>
+          <input type="text" id="experticia" name="experticia" placeholder="Ej: Cirugía laparoscópica" autocomplete="off" aria-label="Experticia" required>
+
+          <label for="direccion">
+            <h3>Dirección Completa</h3>
+          </label>
+          <input type="text" id="direccion" name="direccion" placeholder="Calle, número, colonia" autocomplete="street-address" aria-label="Dirección Completa" required>
+
+          <label for="paginaweb">
+            <h3>Página Web</h3>
+          </label>
+          <input type="url" id="paginaweb" name="paginaweb" placeholder="https://www.tusitio.com" autocomplete="url" aria-label="Página Web">
+
+          <label for="telefono">
+            <h3>Teléfono</h3>
+          </label>
+          <input type="tel" id="telefono" name="telefono" placeholder="5512345678" pattern="[0-9]{10}" autocomplete="tel" aria-label="Teléfono (10 dígitos)" required>
+
+          <label for="whatsapp">
+            <h3>WhatsApp</h3>
+          </label>
+          <input type="tel" id="whatsapp" name="whatsapp" placeholder="5512345678" autocomplete="tel" aria-label="WhatsApp" required>
         </section>
 
-        <button id="agregar" type="button">Agregar</button>
+        <!-- Más Información -->
+        <section aria-labelledby="mas-informacion">
+          <br><br><h2 id="mas-informacion">Más información</h2><br>
 
-      <!--Foto de perfil y logo-->
-      <div class="form-group">
-        <label for="fotoPerfil">Foto de perfil:</label>
-        <input type="file" id="fotoPerfil" name="fotoPerfil" accept="image/*" onchange="previewImage(event, 'previewPerfil')">
-        <img id="previewPerfil" class="preview" src="#" alt="Vista previa" style="display: none;">
-      </div>
+          <label for="bio">
+            <h3>Descripción</h3>
+          </label>
+          <textarea id="bio" name="bio" rows="4" placeholder="Describe tus servicios y experiencia" aria-label="Descripción profesional" required></textarea>
+        </section>
 
-      <div class="form-group">
-        <label for="logo">Logo:</label>
-        <input type="file" id="logo" name="logo" accept="image/*" onchange="previewImage(event, 'previewLogo')">
-        <img id="previewLogo" class="preview" src="#" alt="Vista previa" style="display: none;">
-      </div>
+        <!-- Redes Sociales -->
+          <section aria-labelledby="redes-sociales">
+            <br><br><h2 id="redes-sociales">Redes sociales</h2><br>
+    
+            <div>
+              <label>Red social:</label>
+              <select id="red" name="red" required>
+                <option value="ig">Instagram</option>
+                <option value="yt">Youtube</option>
+                <option value="li">LinkedIn</option>
+                <option value="fb">Facebook</option>
+                <option value="x">Twitter</option>
+              </select>
+            </div>
+            <label for="redesocial">
+              <h3>Enlaces a redes sociales</h3>
+            </label>
+            <div id="contenedorResultados"></div>
+            <input type="url" id="redesocial" name="redesocial" placeholder="Facebook, Instagram o LinkedIn" autocomplete="url" aria-label="Red Social">
+          </section>
 
-      <!-- Términos y Condiciones -->
-      <section aria-labelledby="terminos">
-        <h2 id="terminos">Términos y condiciones</h2>
-        <div class="terms-box" role="region" aria-label="Términos y condiciones">
-          <p style="font-size: 14px; color: #7f8c8d;">
-            Esta plataforma tiene el propósito de establecer contacto entre profesionales de la salud, no como medio publicitario al público general. La veracidad de los datos es responsabilidad del solicitante. Los administradores solo publican ligas a páginas públicas proporcionadas por los usuarios, y no se responsabilizan por los datos contenidos en ellas.
-          </p>
+          <button id="agregar" type="button">Agregar</button>
+
+        <!--Foto de perfil y logo-->
+        <div class="form-group">
+          <label for="fotoPerfil">Foto de perfil:</label>
+          <input type="file" id="fotoPerfil" name="fotoPerfil" accept="image/*" onchange="previewImage(event, 'previewPerfil')">
+          <img id="previewPerfil" class="preview" src="#" alt="Vista previa" style="display: none;">
         </div>
-        <label class="terms-label">
-          <input type="checkbox" name="terms" required aria-label="Aceptar términos y condiciones">
-          <span>Acepto los términos y condiciones</span>
-        </label>
-      </section>
 
-      <!-- Datos de Acceso -->
-      <section aria-labelledby="datos-acceso">
-        <h2 id="datos-acceso">Datos de acceso</h2>
+        <div class="form-group">
+          <label for="logo">Logo:</label>
+          <input type="file" id="logo" name="logo" accept="image/*" onchange="previewImage(event, 'previewLogo')">
+          <img id="previewLogo" class="preview" src="#" alt="Vista previa" style="display: none;">
+        </div>
 
-        <label for="correo">
-          <h3 class="required">Correo Electrónico</h3>
-        </label>
-        <input type="email" id="correo" name="correo" placeholder="tucorreo@ejemplo.com" required autocomplete="email" aria-label="Correo Electrónico">
+        <!-- Términos y Condiciones -->
+        <section aria-labelledby="terminos">
+          <br><br><h2 id="terminos">Términos y condiciones</h2><br>
+          <div class="terms-box" role="region" aria-label="Términos y condiciones">
+            <p style="font-size: 14px; color: #000000;">
+              ESTA PLATAFORMA TIENE EL PROPÓSITO DE ESTABLECER CONTACTO ENTRE PROFESIONALES DE LA SALUD, NO COMO MEDIO PUBLICITARIO AL PÚBLICO GENERAL. LA VERACIDAD DE LOS DATOS ES RESPONSABILIDAD DEL SOLICITANTE. LOS ADMINISTRADORES SOLO PUBLICAN LIGAS A PÁGINAS PÚBLICAS PROPORCIONADAS POR LOS USUARIOS, Y NO SE RESPONSABILIZAN POR LOS DATOS CONTENIDOS EN ELLAS.
+            </p>
+          </div>
+          <br><br>
+          <label style="display: inline-flex; align-items: center;">
+            <input type="checkbox" name="terms" required aria-label="Aceptar términos y condiciones" required> Acepto los términos y condiciones
+          </label>
+        </section>
 
-        <label for="usuario">
-          <h3 class="required">Nombre de Usuario</h3>
-        </label>
-        <input type="text" id="usuario" name="usuario" placeholder="Mínimo 6 caracteres" minlength="6" required autocomplete="username" aria-label="Nombre de Usuario">
+        <!-- Datos de Acceso -->
+        <section aria-labelledby="datos-acceso">
+          <br><br><h2 id="datos-acceso">Datos de acceso</h2><br>
 
-        <label for="password">
-          <h3 class="required">Contraseña</h3>
-        </label>
-        <input type="password" id="password" name="password" placeholder="Mínimo 8 caracteres" minlength="8" required autocomplete="new-password" aria-label="Contraseña">
-      </section>
+          <label for="correo">
+            <h3 class="required">Correo Electrónico</h3>
+          </label>
+          <input type="email" id="correo" name="correo" placeholder="tucorreo@ejemplo.com" required autocomplete="email" aria-label="Correo Electrónico">
 
-      <button type="submit" aria-label="Enviar registro">Guardar y previsualizar</button>
-    </form>
+          <label for="usuario">
+            <h3 class="required">Nombre de Usuario</h3>
+          </label>
+          <input type="text" id="usuario" name="usuario" placeholder="Mínimo 6 caracteres" minlength="6" required autocomplete="username" aria-label="Nombre de Usuario">
+
+          <label for="password">
+            <h3 class="required">Contraseña</h3>
+          </label>
+          <input type="password" id="password" name="password" placeholder="Mínimo 8 caracteres" minlength="8" required autocomplete="new-password" aria-label="Contraseña">
+        
+          <label for="password">
+            <h3 class="required">Confirmar contraseña</h3>
+          </label>
+          <input type="password" id="confirmar" name="confirmar" placeholder="Mínimo 8 caracteres" minlength="8" required autocomplete="new-password" aria-label="Contraseña">
+        </section>
+
+        <button type="submit" aria-label="Enviar registro">Guardar</button>
+      </form>
+    </div>
   </main>
 
   <footer role="contentinfo">

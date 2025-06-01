@@ -2,9 +2,55 @@ document.addEventListener('DOMContentLoaded', async () => {
   fetch
 });
 
+function previewImage(event, idPreview) {
+    const input = event.target;
+    const preview = document.getElementById(idPreview);
+
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        preview.src = e.target.result;
+        preview.style.display = "block";
+      };
+
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
 // Maneja el envío del formulario de registro
 document.getElementById("register-form").addEventListener("submit", async (e) => {
   e.preventDefault(); // Evita el envío tradicional del formulario
+
+  const img = document.getElementById("previewLogo");
+const url = img.src;
+var blob;
+
+// 1.1) Si es un Data-URL (data:image/...;base64,...), conviértelo primero a un Blob:
+// opcionalmente puedes distinguir usando url.startsWith("data:")
+if (url.startsWith("data:")) {
+  // Extrae la parte base64
+  const [meta, base64] = url.split(",");
+  const mime = meta.match(/data:(.*);base64/)[1];
+  // decodifica
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  blob = new Blob([bytes], { type: mime });
+  // → ya tienes tu Blob
+}
+
+// 1.2) Si es una URL normal (http:// o /uploads/…), úsala con fetch:
+fetch(url)
+  .then(res => res.blob())
+  .then(blob => {
+    // → aquí tienes tu Blob
+    console.log(blob);
+  })
+  .catch(console.error);
+
 
   // Recolecta los datos del formulario
   const data = new FormData(e.target);
@@ -12,6 +58,7 @@ document.getElementById("register-form").addEventListener("submit", async (e) =>
     id: 0, // Se puede omitir si el backend lo autogenera
     nombre: data.get("nombre"),
     ciudad: data.get("ciudad"),
+    estado: data.get("estado"),
     especialidad: 1, // Posible futuro campo para seleccionar desde UI
     experticia: data.get("experticia"),
     direccion: data.get("direccion"),
@@ -19,12 +66,46 @@ document.getElementById("register-form").addEventListener("submit", async (e) =>
     telefono: data.get("telefono"),
     whatsapp: data.get("whatsapp"),
     bio: data.get("bio"),
+    facebook: "",
+    instagram: "",
+    linkedin: "",
+    youtube: "",
+    twitter: "",
+    logo: blob,
+    perfil: data.get("fotoPerfil"),
     correo: data.get("correo"),
     usuario: data.get("usuario"),
     password: data.get("password"),
   };
 
+  console.log(blob)
   try {
+    const redesAgregadas = document.querySelectorAll(".registro-red");
+
+    redesAgregadas.forEach(div => {
+      const tipo = div.dataset.red;
+      const texto = div.querySelector("label").textContent.split(":")[1].trim();
+
+      switch (tipo) {
+        case "fb":
+          payload.facebook = texto;
+          break;
+        case "ig":
+          payload.instagram = texto;
+          break;
+        case "li":
+          payload.linkedin = texto;
+          break;
+        case "x":
+          payload.twitter = texto;
+          break;
+
+        case "yt":
+          payload.youtube = texto;
+          break;
+      }
+    });
+
     // Realiza la petición para registrar al nuevo usuario
     const res = await fetch("http://localhost:4000/api/usuarios", {
       method: "POST",

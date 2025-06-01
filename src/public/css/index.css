@@ -185,6 +185,8 @@ button {
   background-color: #0056b3;
   color: #fff;
   padding: 10px 15px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   border: none; /* Antes estaba '5px' ← eso no era válido */
   border-radius: 4px;
   cursor: pointer;
@@ -267,4 +269,46 @@ button {
 
 #logoutModal {
   margin-right: 350px; /* Considera cambiar esto a una clase reutilizable */
+}
+
+/*Registro*/
+.form-card {
+  background: #fff;
+  padding:50px 250px 250px 250px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  margin-bottom: 30px;
+}
+.form-card label {
+  display: block;
+  margin-bottom: 15px;
+  font-weight: 600;
+  color: #333;
+}
+.form-card input,
+.form-card select,
+.form-card textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  background: #fff;
+}
+.form-card button {
+  width: auto;
+  padding: 10px 20px;
+  margin-top: 10px;
+  background-color: #0056b3;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+.form-card button:hover {
+  background-color: #004494;
 }

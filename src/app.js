@@ -52,6 +52,28 @@ app.use('/api/usuarios', usuarios);
 app.use('/api/auth', auth);
 app.use('/api/especialidades', especialidades);
 
+app.post("/api/usuarios/consulta", async (req, res, next) => {
+  try {
+    const resultados = await obtenerUsuariosDeDB(req.body);
+    const usuariosConLogo = resultados.map(u => {
+      let logoDataUrl = "/img/default.png";
+      if (u.logo && Buffer.isBuffer(u.logo) && u.logo.length) {
+        // convierte el Buffer a base64
+        const base64 = u.logo.toString("base64");
+        // ajusta el MIME según tu almacenamiento (png, jpeg…)
+        logoDataUrl = `data:image/png;base64,${base64}`;
+      }
+      return {
+        ...u,
+        logo: logoDataUrl
+      };
+    });
+    res.json({ success: true, body: usuariosConLogo });
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.use((err, req, res, next) => {
     console.error(err);
     res.status(err.status || 500).json({ error: err.message });

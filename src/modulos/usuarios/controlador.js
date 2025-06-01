@@ -4,13 +4,33 @@ const auth = require('../auth');
 module.exports = function (dbInyectada) {
     let db = dbInyectada || require('../../DB/mysql');
 
-    function todos(_, body) {
+    async function todos(_, body) {
         if (!body.que) {
             throw new Error("Falta el campo 'que'");
         }
 
-        return db.query(TABLA, { experticia: body.que });
+        const resultados = await db.query(TABLA, { experticia: body.que });
+
+            // 2️⃣ Mapea cada registro y convierte el BLOB a Data-URL
+            const usuariosConLogo = resultados.map(u => {
+            let logoDataUrl = 'default.png';
+
+            // Si u.logo es un Buffer real y tiene contenido…
+            if (u.logo && Buffer.isBuffer(u.logo) && u.logo.length) {
+            const base64    = u.logo.toString('base64');
+            // Aquí asumo PNG; cámbialo a 'image/jpeg' si tu BLOB es JPG
+            logoDataUrl     = `data:image/jpeg;base64,${base64}`;
+            }
+
+            return {
+            ...u,
+            logo: logoDataUrl
+            };
+        });
+
+        return usuariosConLogo;
     }
+
 
     function uno(id) {
         return db.uno(TABLA, id);
@@ -54,7 +74,14 @@ module.exports = function (dbInyectada) {
             paginaweb: body.paginaweb,
             telefono: body.telefono,
             whatsapp: body.whatsapp,
-            bio: body.bio
+            bio: body.bio,
+            facebook: body.facebook,
+            instagram: body.instagram,
+            linkedin: body.linkedin,
+            youtube: body.youtube,
+            twitter: body.twitter,
+            logo: body.logo,
+            perfil: body.perfil,
         };
 
         const result = await db.agregar(TABLA, usuarioNuevo);
