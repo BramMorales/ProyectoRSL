@@ -1,26 +1,37 @@
-const config = require('../../config');
-
 const TABLA = 'rslespecialidad';
-const SALT_ROUNDS = 10;
 
-module.exports = function (dbInyectada) {
-    const db = dbInyectada || require('../../DB/mysql');
+module.exports = function (dbInyectada){
 
-    /**
-     * Realiza la consulta de las especialidades.
-     */
-    async function todos() {
+    let db = dbInyectada;
+
+    if(!db){
+        db = require('../../DB/mysql');
+    }
+
+    function todos()
+    {
         return db.todos(TABLA);
     }
 
-    /**
-     * Agrega una nueva especialidad con contraseña hasheada.
-     */
-    async function agregar(data) {
-        
+    function uno(id_rslespecialidad)
+    {
+        return db.query(TABLA, {id_rslespecialidad: id_rslespecialidad});
     }
 
+    function eliminar(id_rslespecialidad)
+    {
+        return db.eliminar(TABLA, {id_rslespecialidad: id_rslespecialidad});
+    }
+
+    function agregar(body)
+    {
+        return db.agregar(TABLA, body);
+    }
+    
     return {
-        todos
-    };
+        todos,
+        uno,
+        eliminar,
+        agregar,
+    }
 }

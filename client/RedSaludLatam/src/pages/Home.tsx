@@ -1,5 +1,5 @@
 // src/pages/Home.tsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Nav from "../components/Nav";
 import Hero from "../components/Hero";
 import SearchForm from "../components/SearchForm";
@@ -32,12 +32,27 @@ const Home: React.FC = () => {
     },
   ];
 
+  const [imagenes, setImagenes] = useState<{ url: string }[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:4000/api/uploads/banners")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data.imagenes)) {
+          setImagenes(data.imagenes.map((url: string) => ({ url })));
+        }
+      })
+      .catch((err) => {
+        console.error("Error al cargar imágenes del banner:", err);
+      });
+  }, []);
+
   return (
     <>
       {/* Navegación superior */}
       <Nav />
 
-      <Hero>
+      <Hero images={imagenes.map((img) => img.url)}>
         <h1>RedSaludLatam</h1>
         <SearchForm />
       </Hero>

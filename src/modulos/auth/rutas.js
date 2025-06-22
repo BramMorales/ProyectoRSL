@@ -12,11 +12,21 @@ router.post('/login', async (req, res, next) => {
 
     try {
         await controlador.login(usuario, password, res); // El controlador se encarga de enviar la cookie
-        res.status(200).json({ mensaje: 'Login exitoso' }); // No es necesario devolver el token si va en cookie
-    } catch (err) {
+        } catch (err) {
         console.error('Error en login:', err.message);
         res.status(401).json({ error: err.message });
     }
 });
+
+router.post('/logout', (req, res) => {
+  res.clearCookie('jwt', {
+    httpOnly: true,
+    secure: true,       // o false si estás en localhost sin HTTPS
+    sameSite: 'Lax',    // o 'None' si estás usando cross-origin con credentials
+    path: '/',
+  });
+  res.status(200).json({ mensaje: 'Sesión cerrada' });
+});
+
 
 module.exports = router;

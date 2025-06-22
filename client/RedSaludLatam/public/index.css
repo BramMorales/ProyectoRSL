@@ -1,20 +1,45 @@
-/* ========================
+/* =========================================================
    RESET GENERAL
-======================== */
+   - Resetea márgenes, paddings y box-sizing para todos los elementos
+========================================================= */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Open Sans', sans-serif;
+/* En tu CSS global */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-/* ========================
-   NAVEGACIÓN
-======================== */
-nav {
+main {
+  flex: 1;
+}
+
+/* Si usas un wrapper principal */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+
+/* =========================================================
+   LAYOUT GENERAL (APP CONTAINER, NAVBAR, FOOTER, MAIN WRAPPER)
+   - Organiza la estructura principal en flex-column:
+     navbar arriba, contenido + sidebar en medio, footer abajo
+========================================================= */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Navbar: altura fija (por ejemplo, 120px) */
+nav#barra {
   width: 100%;
   height: 120px;
   background-color: #000000;
@@ -22,16 +47,24 @@ nav {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
+  z-index: 1001;
 }
 
-/* .nav-left y .nav-right agrupan la alineación interna */
 .nav-left {
   display: flex;
   align-items: center;
 }
 
-/* Los enlaces del nav que estaban en .nav-right a <a> los convertimos en .nav-right a, 
-   pero muchas veces en React vas a usar <Link> en lugar de <a> */
+.nav-left img {
+  max-height: 80px;
+  width: auto;
+}
+
+.nav-right {
+  display: flex;
+  gap: 2rem;
+}
+
 .nav-right a,
 .nav-right button {
   color: #fff;
@@ -44,24 +77,7 @@ nav {
   font-size: 1rem;
 }
 
-/* ========================
-   NAVEGACIÓN (estilos para NavLink)
-======================== */
-
-/* Logo: ajusta su tamaño según tu preferencia */
-nav#barra .nav-left img {
-  max-height: 80px;
-  width: auto;
-}
-
-/* Contenedor de pestañas */
-nav#barra .nav-right {
-  display: flex;
-  gap: 2rem; /* espacio entre pestañas */
-}
-
-/* Estilo base para cada link */
-nav#barra .nav-right .nav-link {
+.nav-right .nav-link {
   color: #fff;
   text-decoration: none;
   font-weight: 600;
@@ -71,19 +87,17 @@ nav#barra .nav-right .nav-link {
   transition: color 0.2s ease;
 }
 
-/* Hover: cambiar color o subrayado */
-nav#barra .nav-right .nav-link:hover {
-  color: #40cfff; /* ejemplo: de blanco a negro al pasar el cursor */
+.nav-right .nav-link:hover {
+  color: #40cfff;
 }
 
-/* Estado "activo": color y subrayado (o fondo) distinto */
-nav#barra .nav-right .nav-link.active {
-  color: #40cfff; /* pestaña activa en negro */
-  cursor: default; /* quita mano de clic para pestaña activa */
+.nav-right .nav-link.active {
+  color: #40cfff;
+  pointer-events: none;
+  opacity: 0.7;
 }
 
-/* También puedes agregar un subrayado animado */
-nav#barra .nav-right .nav-link.active::after {
+.nav-right .nav-link.active::after {
   content: "";
   position: absolute;
   bottom: -4px;
@@ -94,44 +108,253 @@ nav#barra .nav-right .nav-link.active::after {
   border-radius: 2px;
 }
 
-/* Si quieres “deshabilitar” la pestaña activa para que no se pueda hacer clic, agregas */
-nav#barra .nav-right .nav-link.active {
-  pointer-events: none;
-  opacity: 0.7; /* un poco atenuada para mostrar que no es clicable */
+/* Contenedor principal (entre navbar y footer): sidebar + contenido */
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  background-color: #f9fafb;
 }
 
+/* Sidebar en flujo normal dentro de .main-wrapper */
+.sidebar {
+  width: 240px;
+  background-color: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  overflow-y: auto;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+}
 
-/* ========================
+/* Contenido principal, al lado derecho de .sidebar */
+.main-content {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+/* Footer: altura fija (por ejemplo, 40px) */
+.footer {
+  background-color: #2B2D42; /* mismo tono del nav */
+  color: #fff;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.9rem;
+}
+.footer a {
+  color: #fff;
+  text-decoration: underline;
+  margin: 0 0.5rem;
+}
+
+/* =========================================================
+   SIDEBAR (MENÚ LATERAL) 
+   - Estilos para el menú izquierdo, con submenús anidados
+========================================================= */
+/* Navegación interna del sidebar */
+.sidebar-nav {
+  padding: 1rem 0;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Botones principales (Usuarios, Publicaciones, Publicidad) */
+.sidebar-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 0.65rem 1rem;
+  font-size: 1rem;
+  color: #2d3748;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.sidebar-button:hover {
+  background-color: #f7fafc;
+}
+
+.sidebar-button.active {
+  background-color: #edf2f7;
+}
+
+/* Icono principal a la izquierda */
+.sidebar-button .icon {
+  margin-right: 0.75rem;
+  font-size: 1.1rem;
+  color: #4a5568;
+}
+
+/* Icono de chevron para desplegar/plegar */
+.toggle-icon {
+  font-size: 0.75rem;
+  color: #718096;
+}
+
+/* Submenús de primer nivel (lista indentada) */
+.submenu {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 1.5rem; /* Sangría interna */
+}
+
+/* Items de nivel 2 (especialidades, Pendientes, Verificados) */
+.subitem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  color: #4a5568;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.subitem:hover {
+  background-color: #f7fafc;
+}
+
+.subitem.active {
+  background-color: #e2e8f0;
+}
+
+.subitem .icon {
+  margin-right: 0.6rem;
+}
+
+/* Sub-submenús (Verificados / Pendientes dentro de cada especialidad) */
+.sub-submenu {
+  list-style: none;
+  margin: 0.25rem 0 0 1.5rem; /* Espacio arriba + sangría adicional */
+  padding: 0;
+}
+
+.subsubitem {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 0.4rem 1rem;
+  font-size: 0.9rem;
+  color: #4a5568;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.subsubitem:hover {
+  background-color: #f7fafc;
+}
+
+.subsubitem .icon {
+  margin-right: 0.6rem;
+  font-size: 0.9rem;
+  color: #718096;
+}
+
+/* Botón “Crear” al final del submenú de Usuarios */
+.create-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  color: #3182ce;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.create-btn .icon {
+  margin-right: 0.6rem;
+}
+
+.create-btn:hover {
+  background-color: #ebf8ff;
+  color: #2b6cb0;
+}
+
+/* Barra de desplazamiento personalizada (opcional) */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: #a0aec0;
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* =========================================================
    SECCIÓN HERO
-======================== */
+   - Imagen de fondo, overlay semitransparente y contenido centrado
+========================================================= */
+/* ---------- Hero.css ---------- */
 
-/* Unificamos .hero y .hero2 en la misma clase, usando altura variable */
+/* 1. Contenedor principal (.hero) ya no lleva background, 
+      sino que sirve de wrapper para los .hero-slide apilados */
 .hero {
   position: relative;
   width: 100%;
-  height: 80vh; /* Si quieres versión de 200px, crea una clase adicional en React (p.ej. .hero.small) */
-  background: url('/img/doctor.jpg') no-repeat center bottom / cover;
+  height: 80vh; /* o la altura que prefieras */
+  overflow: hidden;   /* oculta los slides que no estén activos */
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.hero.small {
-  height: 200px;
+/* 2. Cada slide: ocupará todo el .hero, con su propia imagen de fondo */
+.hero-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background-position: center bottom;
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  opacity: 0;                    /* por defecto invisible */
+  transition: opacity 1s ease-in-out; /* transición de fade */
 }
 
+/* 3. El slide “activo” se hace completamente visible */
+.hero-slide.active {
+  opacity: 1;
+}
+
+/* 4. Overlay semitransparente encima de las imágenes (igual que tenías) */
 .hero-overlay {
   position: absolute;
   top: 0;
   left: 0;
+
   width: 100%;
   height: 100%;
+
   background-color: rgba(0, 0, 0, 0.4);
+  pointer-events: none; /* para que no bloquee clicks en hero-content */
 }
 
+/* 5. Contenido centrado encima del hero */
 .hero-content {
   position: relative;
-  z-index: 1;
+  z-index: 1;      /* por encima de .hero-slide y .hero-overlay */
   text-align: center;
   color: #fff;
 }
@@ -141,10 +364,25 @@ nav#barra .nav-right .nav-link.active {
   margin-bottom: 1rem;
 }
 
-/* ========================
-   SEARCH FORM: CON BORDE SEMITRANSPARENTE E INTERIOR BLANCO
-======================== */
+/* 6. Variante “small” si quisieras usarla en algún lugar */
+.hero.small {
+  height: 200px;
+}
 
+/* ===== Opcional: responsivo ===== */
+@media (max-width: 768px) {
+  .hero {
+    height: 50vh;
+  }
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+}
+
+/* =========================================================
+   SEARCH FORM
+   - Fondo con borde semitransparente, interior blanco y blur
+========================================================= */
 .search-container {
   display: flex;
   align-items: center;
@@ -153,10 +391,10 @@ nav#barra .nav-right .nav-link.active {
   color: #f9f9f9;
   font-weight: bolder;
   padding: 1rem 1.5rem;
-  background: rgba(255, 255, 255, 0.2); /* Contorno semitransparente */
+  background: rgba(255, 255, 255, 0.2);
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
-  backdrop-filter: blur(6px); /* Desenfoque sutil de fondo */
+  backdrop-filter: blur(6px);
   max-width: 800px;
   margin: 0 auto;
 }
@@ -168,7 +406,7 @@ nav#barra .nav-right .nav-link.active {
 
 .search-group label {
   font-weight: bolder;
-  color: #000000; /* Puedes usar #333 si el fondo es claro */
+  color: #000000;
   margin-bottom: 4px;
 }
 
@@ -197,11 +435,10 @@ nav#barra .nav-right .nav-link.active {
   background-color: #7cdaf9;
 }
 
-
-
-/* ========================
+/* =========================================================
    BOTÓN FLOTANTE WHATSAPP
-======================== */
+   - Icono redondo fijo en la esquina inferior derecha
+========================================================= */
 .whatsapp-float {
   position: fixed;
   width: 60px;
@@ -225,74 +462,12 @@ nav#barra .nav-right .nav-link.active {
   background-color: #20c957;
 }
 
-/* ========================
-   REGISTRO (FORM-CARD)
-======================== */
-.form-card {
-  background: #fff;
-  padding: 50px 250px 250px 250px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 30px;
-}
-
-.form-card label {
-  display: block;
-  margin-bottom: 15px;
-  font-weight: 600;
-  color: #333;
-}
-
-.form-card input,
-.form-card select,
-.form-card textarea {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-  background: #fff;
-}
-
-.form-card button {
-  margin-top: 10px;
-  background-color: #0056b3;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.3s;
-}
-
-.form-card button:hover {
-  background-color: #004494;
-}
-
-/* ========================
-   FOOTER (ejemplo básico)
-======================== */
-.footer {
-  background-color: #2B2D42; /* mismo tono del nav */
-  color: #fff;
-  text-align: center;
-  padding: 1rem 0;
-  font-size: 0.9rem;
-}
-.footer a {
-  color: #fff;
-  text-decoration: underline;
-  margin: 0 0.5rem;
-}
-
-/* ========================
-   SECCIÓN NOTICIAS / AVISOS (con publicidad lateral)
-======================== */
-
+/* =========================================================
+   SECCIÓN NOTICIAS / AVISOS
+   - Tres columnas: Ad (izq), Lista de noticias (centro), Ad (der)
+========================================================= */
 .news-section {
-  max-width: 1200px; /* Ajusta al ancho que necesites */
+  max-width: 1200px;
   margin: 2rem auto;
   padding: 0 1rem;
 }
@@ -305,15 +480,13 @@ nav#barra .nav-right .nav-link.active {
   text-align: center;
 }
 
-/* Contenedor flexible de 3 columnas: publicidad | noticias | publicidad */
 .news-wrapper {
   display: flex;
   gap: 1.5rem;
 }
 
-/* Cada anuncio ocupa un ancho fijo (ajustable) */
 .ad-container {
-  flex: 0 0 200px; /* ancho fijo de 200px, no crece ni encoge */
+  flex: 0 0 200px;
   background: #f9f9f9;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -321,7 +494,6 @@ nav#barra .nav-right .nav-link.active {
   text-align: center;
 }
 
-/* Título y texto dentro de cada ad */
 .ad-title {
   font-size: 1.1rem;
   font-weight: 600;
@@ -334,7 +506,6 @@ nav#barra .nav-right .nav-link.active {
   color: #555;
 }
 
-/* Contenedor central: las noticias pueden crecer y encoger según espacio */
 .news-list-container {
   flex: 1;
   display: flex;
@@ -342,7 +513,6 @@ nav#barra .nav-right .nav-link.active {
   gap: 1.5rem;
 }
 
-/* Cada tarjeta de noticia */
 .news-card {
   background: #fff;
   border-radius: 8px;
@@ -372,22 +542,10 @@ nav#barra .nav-right .nav-link.active {
   text-decoration: underline;
 }
 
-/* Adaptaciones responsivas */
-@media (max-width: 1024px) {
-  .news-wrapper {
-    flex-direction: column;
-  }
-  .ad-container {
-    flex: 1 1 auto;
-    max-width: 100%;
-    margin-bottom: 1rem;
-  }
-}
-
-/* ========================
+/* =========================================================
    PÁGINA DE FORMULARIO CON IMAGEN “HERO” VERTICAL
-======================== */
-
+   - Contenedor dividido en 3/4 formulario y 1/4 imagen sticky
+========================================================= */
 /* Contenedor principal: 3/4 formulario + 1/4 imagen (full height) */
 .form-page {
   display: flex;
@@ -399,14 +557,17 @@ nav#barra .nav-right .nav-link.active {
 .form-container {
   flex: 3; /* 3 fracciones del espacio total */
   background: #fff;
-  padding: 2rem;
+  padding: 5rem;
   overflow-y: auto; /* Permite scroll si el formulario es más alto que la ventana */
 }
+
+
 
 /* Título del formulario */
 .form-title {
   font-size: 1.75rem;
   font-weight: 600;
+  margin-top: 3rem;
   margin-bottom: 1.5rem;
   color: #333;
 }
@@ -416,6 +577,11 @@ nav#barra .nav-right .nav-link.active {
   display: flex;
   flex-direction: column;
   margin-bottom: 1rem;
+}
+
+.terms-box p {
+  text-align: justify;
+  max-width: 75%;
 }
 
 .form-content label {
@@ -433,6 +599,7 @@ nav#barra .nav-right .nav-link.active {
   border-radius: 4px;
   background: #f9f9f9;
   outline: none;
+  max-width: 75%;
 }
 
 .form-content input:focus,
@@ -460,7 +627,7 @@ nav#barra .nav-right .nav-link.active {
 
 /* Contenedor de la imagen lateral, 1/4 del ancho y full height */
 .side-image {
-  flex: 1.75;         /* 1 fracción del espacio total => 1/4 */
+  flex: 3.5;         /* 1 fracción del espacio total => 1/4 */
   position: sticky;/* Permite que la imagen quede fija al hacer scroll */
   top: 0;          /* Se pega a la parte superior */
   height: 100vh;   /* Ocupa toda la altura de la ventana */
@@ -473,8 +640,20 @@ nav#barra .nav-right .nav-link.active {
   object-fit: cover;   /* Cubre todo el contenedor manteniendo proporción */
   display: block;
 }
+/* =========================================================
+   ADAPTACIONES RESPONSIVAS
+========================================================= */
+@media (max-width: 1024px) {
+  .news-wrapper {
+    flex-direction: column;
+  }
+  .ad-container {
+    flex: 1 1 auto;
+    max-width: 100%;
+    margin-bottom: 1rem;
+  }
+}
 
-/* Adaptación a pantallas pequeñas */
 @media (max-width: 768px) {
   .form-page {
     flex-direction: column;
@@ -482,11 +661,10 @@ nav#barra .nav-right .nav-link.active {
   .form-container,
   .side-image {
     flex: 1 1 100%;
-    height: auto; /* En mobile, la imagen ya no será sticky full height */
+    height: auto;
     position: relative;
   }
   .side-image img {
     height: auto;
   }
 }
-

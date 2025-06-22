@@ -1,35 +1,42 @@
-/* src/styles/LoginModal.css */
-
-.modal-overlay {
+.modal-container {
   position: fixed;
   top: 0;
   left: 0;
+  
+  /* Cubre toda la ventana */
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro */
+  
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: 10000;
 }
 
-.modal {
-  background-color: white;
-  padding: 2rem;
+.modal-content {
+  background-color: rgba(255,255,255,1);
+  padding: 1.5rem;
   border-radius: 8px;
-  max-width: 400px;
-  width: 90%;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  width: 150px;
+  max-width: 30%;
+  color: black;
   position: relative;
-  z-index: 10000;
 }
 
 .close-btn {
   position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 1.5rem;
-  background: none;
+  top: 8px;
+  right: 8px;
+  background: transparent;
   border: none;
+  font-size: 1.5rem;
   cursor: pointer;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
 }
