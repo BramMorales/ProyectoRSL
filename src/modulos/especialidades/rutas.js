@@ -20,7 +20,7 @@ async function todos (req, res, next){
     }
     catch(err)
     {
-        next(err);
+        respuesta.error(req, res, err.message, 401)
     }
 };
 
@@ -31,7 +31,7 @@ async function uno(req, res, next){
     }
     catch(err)
     {
-        next(err);
+        respuesta.error(req, res, err.message, 401)
     }
 };
 
@@ -41,7 +41,7 @@ async function eliminar (req, res, next) {
         respuesta.success(req, res, 'Item eliminado', 200);
     }
     catch (err) {
-        next(err);
+        respuesta.error(req, res, err.message, 401)
     }
 };
 
@@ -55,7 +55,7 @@ async function agregar (req, res, next){
     }
     catch(err)
     {
-        next(err);
+        respuesta.error(req, res, err.message, 401)
     }
 };
 

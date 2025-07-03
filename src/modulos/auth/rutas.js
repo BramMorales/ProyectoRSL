@@ -1,32 +1,35 @@
 const express = require('express');
 const router = express.Router();
 const controlador = require('./index');
+const respuesta = require('../../red/respuestas')
 
-// POST /login
-router.post('/login', async (req, res, next) => {
+
+router.post('/login', login);
+router.post('/logout', logout);
+
+async function login (req, res) {
     const { usuario, password } = req.body;
 
     if (!usuario || !password) {
-        return res.status(400).json({ error: 'Usuario y contraseña son requeridos' });
+        return respuesta.error(req, res, '¡Usuario o contraseña requerido!', 400);
     }
 
     try {
-        await controlador.login(usuario, password, res); // El controlador se encarga de enviar la cookie
-        } catch (err) {
-        console.error('Error en login:', err.message);
-        res.status(401).json({ error: err.message });
+        const token = await controlador.login(usuario, password, res);
+        respuesta.success(req, res, token, 200)
+    } 
+    catch (err) {
+        respuesta.error(req, res, err.message, 401)
     }
-});
+}
 
-router.post('/logout', (req, res) => {
+async function logout(req, res) {
   res.clearCookie('jwt', {
     httpOnly: true,
-    secure: true,       // o false si estás en localhost sin HTTPS
-    sameSite: 'Lax',    // o 'None' si estás usando cross-origin con credentials
+    secure: true,      
+    sameSite: 'Lax',    
     path: '/',
   });
-  res.status(200).json({ mensaje: 'Sesión cerrada' });
-});
-
-
+  respuesta.success(req, res, '¡Sesión cerrada con éxito!', 200)
+}
 module.exports = router;

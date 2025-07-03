@@ -3,6 +3,7 @@ const path = require("path");
 const fs = require("fs");
 
 const storage = multer.diskStorage({
+  //Asignación de ruta
   destination: (req, file, cb) => {
     // Parsear el nombre de archivo para obtener el nombre de la carpeta
     const originalName = file.originalname;
@@ -14,6 +15,7 @@ const storage = multer.diskStorage({
 
     cb(null, uploadPath);
   },
+  //Asignación de nombre
   filename: (req, file, cb) => {
     const nombreFinal = req.body.nombre || "imagen-" + Date.now() + path.extname(file.originalname);
     cb(null, nombreFinal);
@@ -23,4 +25,4 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-module.exports = upload; // ✅ CommonJS
+module.exports = upload;

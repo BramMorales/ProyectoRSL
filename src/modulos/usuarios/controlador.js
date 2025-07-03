@@ -1,86 +1,51 @@
-// src/modulos/usuarios/controlador.js
 const TABLA = 'rsluser';
+const bcrypt = require('bcrypt');
 const auth = require('../auth');
+const jwt = require('../../auth');
+const mailer = require('../../services/mail.service');
+const config = require('../../config');
+const jsonwt = require('jsonwebtoken');
+const respuesta = require('../../red/respuestas')
 
 module.exports = function (dbInyectada) {
   const db = dbInyectada || require('../../DB/mysql');
 
-  /**
-   * Obtiene todos los usuarios cuya experticia coincida con body.que
-   */
-  async function todos(_, body) {
-    if (!body.que) {
-      throw new Error("Falta el campo 'que'");
-    }
-
-    // Usamos experticia_rsluser en lugar de “experticia”
-    const resultados = await db.query(TABLA, { experticia_rsluser: body.que });
-
-    // Mapea cada registro y convierte el BLOB a Data-URL
-    const usuariosConLogo = resultados.map(u => {
-      let logoDataUrl = 'default.png';
-
-      // Si u.logourl_rsluser es un Buffer real y tiene contenido…
-      if (u.logourl_rsluser && Buffer.isBuffer(u.logourl_rsluser) && u.logourl_rsluser.length) {
-        const base64 = u.logourl_rsluser.toString('base64');
-        logoDataUrl = `data:image/jpeg;base64,${base64}`;
-      }
-
-      return {
-        ...u,
-        // Renombramos la propiedad para que el frontend reciba “logo”
-        logo: logoDataUrl
-      };
-    });
-
-    return usuariosConLogo;
-  }
-
-  /**
-   * Obtiene un solo usuario por su id_rsluser
-   */
   function uno(id_rsluser) {
-    return db.uno(TABLA, id_rsluser);
+    return db.uno(TABLA, id_rsluser); 
   }
 
-  /**
-   * Elimina un usuario por su id_rsluser
-   */
+  function query(condiciones) {
+    return db.query(TABLA, condiciones); 
+  }
+
+   function and(condiciones) {
+    return db.and(TABLA, condiciones);
+  }
+
   function eliminar(body) {
-    // body debe contener { id_rsluser: <valor> }
     return db.eliminar(TABLA, body);
   }
 
-  /**
-   * Agrega un nuevo usuario (en rsluser) y, si se proporcionan credenciales,
-   * crea también el registro en rslauth.
-   */
-  async function agregar(res, body) {
+  async function agregar(req, res, body) {
     // Campos para rslauth
     const { usuario_rslauth, correo_rslauth, password_rslauth, admin_rslauth } = body;
 
-    // 1️⃣ Validaciones de unicidad en tabla rslauth
+    // Validaciones de unicidad en tabla rslauth
     if (usuario_rslauth) {
       const existingUser = await db.query('rslauth', { usuario_rslauth });
       if (existingUser.length !== 0) {
-        return res.status(409).json({
-          code: 'USER_TAKEN',
-          message: 'Usuario ya existe, banda'
-        });
+        throw new Error('Usuario ya existente');
       }
     }
 
     if (correo_rslauth) {
       const existingEmail = await db.query('rslauth', { correo_rslauth });
       if (existingEmail.length !== 0) {
-        return res.status(409).json({
-          code: 'EMAIL_TAKEN',
-          message: 'Correo ya existe, banda'
-        });
+        throw new Error('Correo ya existe');
       }
     }
 
-    // 2️⃣ Construcción del objeto para insertar en rsluser
+    // Construcción del objeto para insertar en rsluser
     const usuarioNuevo = {
       // Si body.id_rsluser viene como 0 o undefined, omitimos para que PostgreSQL lo auto‐incremente
       id_rsluser: body.id_rsluser && body.id_rsluser !== 0
@@ -102,35 +67,135 @@ module.exports = function (dbInyectada) {
       linkedin_rsluser: body.linkedin_rsluser,
       youtube_rsluser: body.youtube_rsluser,
       twitter_rsluser: body.twitter_rsluser,
+      contactopreferido_rsluser: body.contactopreferido_rsluser,
       logourl_rsluser: body.logourl_rsluser,
       perfilurl_rsluser: body.perfilurl_rsluser,
-      verificado_rsluser: body.verificado_rsluser
+      verificadoadmin_rsluser: body.verificadoadmin_rsluser
     };
-
-    // 3️⃣ Inserta en rsluser y obtiene el nuevo PK “id_rsluser”
-    //    db.agregar debe usar “RETURNING id_rsluser” internamente
+    
     const result = await db.agregar(TABLA, usuarioNuevo);
     const insertId = result ? result.id_rsluser : null;
 
-    // 4️⃣ Si se proporcionaron credenciales, insertamos en rslauth
+    const payload = {
+      id_rsluser: insertId,
+      usuario_rslauth: body.usuario_rslauth,
+      admin_rslauth: body.admin_rslauth,
+      verificadocorreo_rslauth: body.verificadocorreo_rslauth,
+    };
+          
+    const tokenVerificacion = jwt.asignarToken(payload);
+
+    const mail = await mailer.enviarMailVerificacion(body.correo_rslauth, tokenVerificacion);
+    if(mail.accepted === 0){
+      throw new Error("Error enviando mail de verificación");
+    }
+
+    //  Si se proporcionaron credenciales, insertamos en rslauth
     if (usuario_rslauth || correo_rslauth || password_rslauth) {
         await auth.agregar({
-            idrsluser_rslauth: insertId,       // <-- aquí debe ir exactamente ese nombre
+            idrsluser_rslauth: insertId,      
             usuario_rslauth:   body.usuario_rslauth,
             correo_rslauth:    body.correo_rslauth,
             password_rslauth:  body.password_rslauth,
-            admin_rslauth:     body.admin_rslauth || 0
-        });
+            admin_rslauth:     body.admin_rslauth || 0,
+            verificadocorreo_rslauth: body.verificadocorreo_rslauth || 0,
+        }, res);
 
     }
 
-    return { message: 'Usuario agregado exitosamente', id: insertId };
+    return { mensaje: 'Usuario agregado exitosamente', id: insertId };
   }
 
+  async function verificar(req) {
+    const tokenParam = req.params.token;
+
+    if (!tokenParam) {
+      throw new Error("No hay token");
+    }
+
+    const decoded = jsonwt.verify(tokenParam, config.jwt.secret);
+
+    if (!decoded || !decoded.usuario_rslauth) {
+      throw new Error("Token inválido");
+    }
+
+    const payload = {
+      id_rsluser: decoded.id_rsluser,
+      usuario_rslauth: decoded.usuario_rslauth,
+      admin_rslauth: decoded.admin_rslauth,
+      verificadocorreo_rslauth: decoded.verificadocorreo_rslauth,
+    };
+
+    const nuevoToken = jwt.asignarToken(payload);
+
+    const rslauth = await db.query('rslauth', {idrsluser_rslauth: decoded.id_rsluser}); ; 
+    
+    await auth.actualizar(
+      rslauth[0].id_rslauth, {
+      verificadocorreo_rslauth: 1
+      }
+    );
+
+    return {
+      token: nuevoToken,
+      cookieOptions: {
+        expires: new Date(Date.now() + config.jwt.cookieExpires * 24 * 60 * 60 * 1000),
+        httpOnly: true,
+        path: '/'
+      }
+    };
+}
+
+async function modificar(id, data) {
+    const result = await db.actualizar(TABLA, id, data);
+    return result;
+}
+
+async function solicitarRecuperacion(correo) {
+  const usuario = await db.query("rslauth", { correo_rslauth: correo }); 
+  
+  if (!usuario) {
+    return respuesta.error(req, res, "Correo no registrado", 404);
+  }
+  
+  payload = {
+    id_rslauth: usuario[0].id_rslauth,
+    usuario_rslauth: usuario[0].usuario_rslauth,
+    admin_rslauth: usuario[0].admin_rslauth,
+  }
+
+  const token = jwt.asignarToken(payload);
+  
+  const mail = await mailer.enviarMailReestablecer(correo, token);
+  return mail;
+}
+
+async function restablecerContrasena(token, nuevaContrasena) {
+  if (!token || !nuevaContrasena) {
+    throw new Error("Token o nueva contraseña faltante");
+  }
+  
+  const decoded = jsonwt.verify(token, config.jwt.secret);
+  const id = decoded.id_rslauth;
+  const hashedPassword = await bcrypt.hash(nuevaContrasena.toString(), 10);
+
+  try{
+    const contrasena = await db.actualizar("rslauth", id, { password_rslauth: hashedPassword });
+    return contrasena
+  }catch (error) {
+    throw new Error("Error al actualizar la contraseña: " + error.message);
+  }
+}
+
   return {
-    todos,
     uno,
+    query,
+    and,
     eliminar,
-    agregar
+    agregar, 
+    verificar,
+    modificar,
+    solicitarRecuperacion,
+    restablecerContrasena
   };
 };

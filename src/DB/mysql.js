@@ -1,44 +1,41 @@
-// src/DB/mysql.js
 const { Pool } = require('pg');
 const config = require('../config');
 
-/**
- * Configuración de conexión a PostgreSQL
- */
+//Configuración de la base de datos
 const pool = new Pool({
   host: config.mysql.host,
   user: config.mysql.user,
   password: config.mysql.password,
   database: config.mysql.database,
-  // Opcional: ssl, etc.
 });
 
-/**
- * Mapeo de claves primarias según la tabla
- */
+//Mapeo de claves primarias según la tabla
 function getPrimaryKey(tabla) {
-  switch (tabla) {
-    case 'rsluser':
-      return 'id_rsluser';
-    case 'rslauth':
-      return 'id_rslauth';
-    default:
-      return 'id';
+  const claves = {
+    rsluser: 'id_rsluser',
+    rslauth: 'id_rslauth',
+    rslespecialidad: 'id_rslespecialidad',
+    rslpublicacion: 'id_rslpublicacion',
+    // Agrega más tablas y sus claves aquí según las que tengas
+  };
+
+  if (!claves[tabla]) {
+    throw new Error(`No se definió clave primaria para la tabla "${tabla}"`);
   }
+
+  return claves[tabla];
 }
 
-/**
- * Manejo de errores de conexión en el pool
- */
+// Manejo de errores de conexión en el pool
 pool.on('error', (err) => {
   console.error('[db err]', err);
-  // Aquí se podría agregar lógica para reconectar o alertar
 });
 
+//Notificación de BD funcional
 (async () => {
   try {
     const client = await pool.connect();
-    await client.query('SELECT 1'); // Consulta de prueba
+    await client.query('SELECT 1');
     client.release();
     console.log('✅ Base de datos lista (PostgreSQL)');
   } catch (err) {
@@ -46,15 +43,9 @@ pool.on('error', (err) => {
   }
 })();
 
-/**
- * Helper para obtener todos los registros de una tabla
- * @param {string} tabla – nombre de la tabla (debe venir de lista blanca)
- * @returns {Promise<Array>} – arreglo con los registros
- */
 async function todos(tabla) {
   const client = await pool.connect();
   try {
-    // IMPORTANTE: validar que "tabla" provenga de una lista blanca
     const res = await client.query(`SELECT * FROM ${tabla}`);
     return res.rows;
   } catch (error) {
@@ -64,12 +55,6 @@ async function todos(tabla) {
   }
 }
 
-/**
- * Helper para obtener un solo registro por su clave primaria
- * @param {string} tabla – nombre de la tabla
- * @param {number|string} id – valor de la clave primaria (ej. id_rsluser)
- * @returns {Promise<Object|null>} – objeto con el registro o null si no existe
- */
 async function uno(tabla, id) {
   const client = await pool.connect();
   try {
@@ -86,30 +71,37 @@ async function uno(tabla, id) {
   }
 }
 
-function getPrimaryKey(tabla) {
-  const claves = {
-    rsluser: 'id_rsluser',
-    rslauth: 'id_rslauth',
-    rslespecialidad: 'id_rslespecialidad',
-    // Agrega más tablas y sus claves aquí según las que tengas
-  };
+async function and(tabla, conds) {
+  const client = await pool.connect();
+  try {
+    // Extrae las claves y valores
+    const keys   = Object.keys(conds);
+    const values = Object.values(conds);
 
-  if (!claves[tabla]) {
-    throw new Error(`No se definió clave primaria para la tabla "${tabla}"`);
+    if (keys.length === 0) {
+      throw new Error("Se requiere al menos una condición para and()");
+    }
+
+    // Construye dinámicamente la cláusula WHERE:
+    const whereClauses = keys
+      .map((k, i) => `"${k}" = $${i + 1}`)
+      .join(" AND ");
+
+    const sql = `
+      SELECT *
+      FROM ${tabla}
+      WHERE ${whereClauses}
+    `;
+
+    const res = await client.query(sql, values);
+    return res.rows || null;
+  } catch (error) {
+    return Promise.reject(error);
+  } finally {
+    client.release();
   }
-
-  return claves[tabla];
 }
 
-
-/**
- * Helper para insertar o actualizar (upsert) un registro en la tabla
- * @param {string} tabla – nombre de la tabla
- * @param {Object} data – objeto con las columnas y valores a insertar/actualizar
- *                        Si incluye la PK, será un UPDATE en caso de conflicto;
- *                        de lo contrario, hará un INSERT normal.
- * @returns {Promise<Object|null>} – el registro insertado/actualizado (o null si DO NOTHING)
- */
 async function agregar(tabla, data) {
   const client = await pool.connect();
   try {
@@ -125,10 +117,10 @@ async function agregar(tabla, data) {
 
     const pk = getPrimaryKey(tabla);
 
-    // Construir lista de columnas: e.g. ["\"id_rsluser\"", "\"nombre_rsluser\"", ...]
+    // Construir lista de columnas
     const columns = keys.map((k) => `"${k}"`).join(', ');
 
-    // Construir placeholders: $1, $2, ...
+    // Construir placeholders
     const placeholders = keys.map((_, idx) => `$${idx + 1}`).join(', ');
 
     // Construir cláusula de actualización: excluimos la PK (no se actualiza)
@@ -160,12 +152,6 @@ async function agregar(tabla, data) {
   }
 }
 
-/**
- * Helper para eliminar un registro por su clave primaria
- * @param {string} tabla – nombre de la tabla
- * @param {Object} data – objeto que debe contener al menos la propiedad con la PK
- * @returns {Promise<number>} – número de filas eliminadas
- */
 async function eliminar(tabla, data) {
   const client = await pool.connect();
   try {
@@ -185,36 +171,73 @@ async function eliminar(tabla, data) {
   }
 }
 
-/**
- * Helper para hacer una consulta dinámica con condiciones a partir de un objeto
- * Ej: query('rsluser', { ciudad_rsluser: 'Tijuana', activo: true })
- * construye: SELECT * FROM rsluser WHERE "ciudad_rsluser" = $1 AND "activo" = $2
- *
- * @param {string} tabla – nombre de la tabla
- * @param {Object} condiciones – objeto con pares { columna: valor }
- * @returns {Promise<Array>} – filas que coinciden con las condiciones
- */
-async function query(tabla, condiciones) {
+async function query(tabla, condiciones = {}) {
   const client = await pool.connect();
   try {
     const keys = Object.keys(condiciones);
+
+    // Si no hay filtros, devuelve todo:
     if (keys.length === 0) {
       const res = await client.query(`SELECT * FROM ${tabla}`);
       return res.rows;
     }
-    // Construir cláusula WHERE: e.g. "\"col1\" = $1 AND \"col2\" = $2"
-    const whereClauses = keys
-      .map((k, idx) => `"${k}" = $${idx + 1}`)
-      .join(' AND ');
-    const values = keys.map((k) => condiciones[k]);
 
-    const res = await client.query(
-      `SELECT * FROM ${tabla} WHERE ${whereClauses}`,
-      values
-    );
+    // Construye cláusulas WHERE dinámicas con unaccent():
+    const whereClauses = keys
+      .map((col, idx) => {
+        const placeholder = `$${idx + 1}`;
+        if (typeof condiciones[col] === "string") {
+          // unaccent(columna) ILIKE unaccent(patron)
+          return `unaccent("${col}") ILIKE unaccent(${placeholder})`;
+        } else {
+          return `"${col}" = ${placeholder}`;
+        }
+      })
+      .join(" AND ");
+
+    // Prepara los valores para los placeholders:
+    const values = keys.map((col) => {
+      if (typeof condiciones[col] === "string") {
+        // búsqueda parcial + quitar tildes
+        return `%${condiciones[col]}%`;
+      } else {
+        return condiciones[col];
+      }
+    });
+
+    // Ejecuta la consulta parametrizada:
+    const sql = `SELECT * FROM ${tabla} WHERE ${whereClauses}`;
+    const res = await client.query(sql, values);
     return res.rows;
-  } catch (error) {
-    return Promise.reject(error);
+  } finally {
+    client.release();
+  }
+}
+
+async function actualizar(tabla, id, cambios) {
+  const client = await pool.connect();
+  try {
+    const pk = getPrimaryKey(tabla);
+    const keys = Object.keys(cambios);
+    const values = Object.values(cambios);
+
+    if (keys.length === 0) {
+      throw new Error('No hay datos para actualizar');
+    }
+
+    const setClause = keys
+      .map((key, i) => `"${key}" = $${i + 1}`)
+      .join(', ');
+
+    const query = `
+      UPDATE ${tabla}
+      SET ${setClause}
+      WHERE "${pk}" = $${keys.length + 1}
+      RETURNING *;
+    `;
+
+    const res = await client.query(query, [...values, id]);
+    return res.rows[0] || null;
   } finally {
     client.release();
   }
@@ -223,7 +246,9 @@ async function query(tabla, condiciones) {
 module.exports = {
   todos,
   uno,
+  and,
   agregar,
   eliminar,
   query,
+  actualizar
 };

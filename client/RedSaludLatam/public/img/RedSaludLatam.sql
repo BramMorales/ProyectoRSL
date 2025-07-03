@@ -4,7 +4,8 @@ CREATE TABLE rslauth (
   usuario_rslauth VARCHAR(40) NOT NULL,
   correo_rslauth VARCHAR(254) NOT NULL,
   password_rslauth VARCHAR(60) NOT NULL,
-  admin_rslauth BOOLEAN NOT NULL,
+  admin_rslauth INTEGER NOT NULL,
+  verificadocorreo_rslauth INTEGER NOT NULL,
   CONSTRAINT fk_rsluser
     FOREIGN KEY (idrsluser_rslauth)
     REFERENCES rsluser(id_rsluser)
@@ -35,7 +36,8 @@ CREATE TABLE rsluser (
   linkedin_rsluser VARCHAR(100),
   facebook_rsluser VARCHAR(100),
   twitter_rsluser VARCHAR(100),
-  verificado_rsluser BOOLEAN NOT NULL,
+  contactopreferido_rsluser VARCHAR(20) NOT NULL,
+  verificadoadmin_rsluser INTEGER NOT NULL,
   CONSTRAINT fk_especialidad
     FOREIGN KEY (especialidad_rsluser)
     REFERENCES rslespecialidad(id_rslespecialidad)

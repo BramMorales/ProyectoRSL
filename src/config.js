@@ -14,5 +14,14 @@ module.exports = {
             user: process.env.MYSQL_USER || 'root',
             password: process.env.MYSQL_PASSWORD || '',
             database: process.env.MYSQL_DB || 'ejemplo',
+        },
+        email: {
+            host: process.env.EMAIL_HOST,
+            user: process.env.EMAIL_USER,
+            password: process.env.EMAIL_PASSWORD,
+        },
+        host: {
+            client: process.env.CLIENT_HOST || 'http://localhost:5173',
+            api: process.env.API_HOST || 'http://localhost:4000',
         }
 }

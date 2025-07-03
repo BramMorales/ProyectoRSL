@@ -6,7 +6,6 @@ const fs = require("fs");
 
 
 router.post("/Upload", upload.single("imagen"), (req, res) => {
-  console.log(req.body.nombre);
 
   if (!req.file) {
     return res.status(400).json({ error: "No se recibió archivo" });
